@@ -10,20 +10,20 @@
   // The ajax file uplaoder is provided for your convenience!
   // Note: remember to fix the URL below.
   /////////////////////////////////////////////////////////////////////
-  //setInterval(function(){ alert("Hello"); }, 3000);
+
 
   const getArrow = () => {
     $.ajax({
-      url: serverUrl + '/',
+      url: serverUrl + '/randomswim',
       type: 'GET',
-      contentType: 'application/JSON',
       success: (data) => {
         console.log('DATA--->', data);
         SwimTeam.move(data);
-        console.log('GET REQUEST DONE');
+        console.log('GET REQUEST SUCCEEDED');
+        setTimeout(function() { getArrow() }, 5000);
       },
       error: () => {
-        console.log('Error');
+        console.log('GET REQUEST FAILED');
       }
     });
   };
@@ -31,7 +31,7 @@
 
   $('#randomswim').click(function() {
     console.log('CLICK HAPPENED');
-    getArrow()
+    getArrow();
   });
 
   const ajaxFileUplaod = (file) => {

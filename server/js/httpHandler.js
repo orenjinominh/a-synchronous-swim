@@ -17,17 +17,19 @@ module.exports.initialize = (queue) => {
 module.exports.router = (req, res, next = ()=>{}) => {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
 
-  if (req.method === 'OPTIONS' && req.url === '/') {
-    res.writeHead(200, headers);
-    res.end();
-  }
 
-  if (req.method === 'GET' && req.url === '/') {
+  if (req.method === 'GET') {
+    console.log(req.url);
     let directions = ['left', 'right', 'up', 'down'];
-    let index = Math.floor(Math.random()* 4);
+    let index = Math.floor(Math.random()* directions.length);
     let arrowPoint = directions[index];
     res.writeHead(200, headers);
     res.write(arrowPoint);
+    res.end();
+  }
+
+  if (req.method === 'OPTIONS' && req.url === '/') {
+    res.writeHead(200, headers);
     res.end();
   }
 
