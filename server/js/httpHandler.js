@@ -17,16 +17,19 @@ module.exports.initialize = (queue) => {
 module.exports.router = (req, res, next = ()=>{}) => {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
 
-  if(req.method === 'OPTIONS') {
+  if (req.method === 'OPTIONS' && req.url === '/') {
     res.writeHead(200, headers);
-    res.end();
-  } else if (req.method === 'GET') {
-    let directions = ['left', 'right', 'up', 'down'];
-    let index = Math.floor(Math.random()* 4);
-    let direction = directions[index];
-    res.writeHead(200, headers);
-    res.write(direction);
     res.end();
   }
+
+  if (req.method === 'GET' && req.url === '/') {
+    let directions = ['left', 'right', 'up', 'down'];
+    let index = Math.floor(Math.random()* 4);
+    let arrowPoint = directions[index];
+    res.writeHead(200, headers);
+    res.write(arrowPoint);
+    res.end();
+  }
+
   next(); // invoke next() at the end of a request to help with testing!
 };
