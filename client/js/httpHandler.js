@@ -14,13 +14,11 @@
 
   const getArrow = () => {
     $.ajax({
-      url: serverUrl + '/randomswim',
+      url: serverUrl + '/',
       type: 'GET',
       success: (data) => {
-        console.log('DATA--->', data);
         SwimTeam.move(data);
         console.log('GET REQUEST SUCCEEDED');
-        setTimeout(function() { getArrow() }, 5000);
       },
       error: () => {
         console.log('GET REQUEST FAILED');
@@ -29,10 +27,7 @@
   };
 
 
-  $('#randomswim').click(function() {
-    console.log('CLICK HAPPENED');
-    getArrow();
-  });
+  setInterval(function(){getArrow()}, 3000);
 
   const ajaxFileUplaod = (file) => {
     var formData = new FormData();
