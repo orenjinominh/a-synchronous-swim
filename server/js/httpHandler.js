@@ -28,31 +28,41 @@ module.exports.router = (req, res, next = ()=>{}) => {
   //   res.end();
   // }
 
-  if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(200, headers);
-    let value = msgQueue.dequeue();
+  if (req.method === 'GET') {
 
-    var imgPath = path.join('.', 'spec', 'water-lg.jpg');
-    var readStream = fs.createReadStream(imgPath);
+    if (req.url === '/') {
+      res.writeHead(200, headers);
+      let value = msgQueue.dequeue();
 
-    readStream.on('data', function(data) {
-      res.write(data);
-    });
-    res.end();
+      if (value !== undefined) {
+        res.write(value);
+      }
 
-    if (value === undefined) {
       res.end();
+      next();
+
+    } else if (req.url === '/background.jpg') {
+      fs.readFile(module.exports.backgroundImageFile, (err, data) => {
+        if (err) {
+          res.writeHead(404, headers);
+        } else {
+          res.writeHead(200, headers);
+          res.write(data, 'binary');
+        }
+        res.end();
+        next();
+      })
     } else {
-      res.write(value);
+      res.writeHead(404, headers);
       res.end();
+      next();
     }
-
   }
 
   if (req.method === 'OPTIONS' && req.url === '/') {
     res.writeHead(200, headers);
     res.end();
+    next();
   }
 
-  next(); // invoke next() at the end of a request to help with testing!
 };

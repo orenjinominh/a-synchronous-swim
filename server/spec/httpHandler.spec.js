@@ -27,7 +27,7 @@ describe('server responses', () => {
     httpHandler.router(req, res);
     expect(res._responseCode).to.equal(200);
     expect(res._ended).to.equal(true);
-    // expect(res._data.toString()).to.not.be.empty;
+    expect(res._data.toString()).to.not.be.empty;
     expect(res._data.toString()).to.be.oneOf(['left', 'right', 'up', 'down']);
 
     done();
@@ -35,25 +35,27 @@ describe('server responses', () => {
 
   it('should respond with 404 to a GET request for a missing background image', (done) => {
     httpHandler.backgroundImageFile = path.join('.', 'spec', 'missing.jpg');
-    let {req, res} = server.mock(httpHandler.backgroundImageFile, 'GET');
+    let {req, res} = server.mock('/background.jpg', 'GET');
 
     httpHandler.router(req, res, () => {
       expect(res._responseCode).to.equal(404);
-    });
-  });
-
-  it('should respond with 200 to a GET request for a present background image', (done) => {
-    httpHandler.backgroundImageFile = path.join('.', 'spec', 'water-lg.jpg');
-    let {req, res} = server.mock(httpHandler.backgroundImageFile, 'GET');
-
-    httpHandler.router(req, res, () => {
-      expect(res._responseCode).to.equal(200);
       expect(res._ended).to.equal(true);
-    done();
+      done();
     });
   });
 
   var postTestFile = path.join('.', 'spec', 'water-lg.jpg');
+
+  it('should respond with 200 to a GET request for a present background image', (done) => {
+    httpHandler.backgroundImageFile = path.join('.', 'background.jpg');
+    let {req, res} = server.mock('/background.jpg', 'GET');
+    httpHandler.router(req, res, () => {
+      expect(res._responseCode).to.equal(200);
+      expect(res._ended).to.equal(true);
+      done();
+    });
+  });
+
 
   xit('should respond to a POST request to save a background image', (done) => {
     fs.readFile(postTestFile, (err, fileData) => {
