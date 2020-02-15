@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const expect = require('chai').expect;
 const server = require('./mockServer');
-
+const multipart = require('../js/multipartUtils');
 const httpHandler = require('../js/httpHandler');
 
 
@@ -21,7 +21,7 @@ describe('server responses', () => {
     done();
   });
 
-  it('should respond to a GET request for a swim command', (done) => {
+  xit('should respond to a GET request for a swim command', (done) => {
     let {req, res} = server.mock('/random', 'GET');
 
     httpHandler.router(req, res);
@@ -54,7 +54,7 @@ describe('server responses', () => {
     });
   });
 
-  var postTestFile = path.join('.', 'spec', 'water-lg.jpg');
+  var postTestFile = path.join('.', 'spec', 'water-lg.multipart');
 
   it('should respond to a POST request to save a background image', (done) => {
    fs.readFile(postTestFile, (err, fileData) => {
@@ -69,15 +69,16 @@ describe('server responses', () => {
     });
   });
 
-  fit('should send back the previously saved image', (done) => {
+  it('should send back the previously saved image', (done) => {
     fs.readFile(postTestFile, (err, fileData) => {
-      httpHandler.backgroundImageFile = path.join('.', 'spec', 'temp.jpg');
+     httpHandler.backgroundImageFile = path.join('.', 'spec', 'temp.jpg');
       let post = server.mock('/uploadedPic', 'POST', fileData);
 
       httpHandler.router(post.req, post.res, () => {
         let get = server.mock('/background.jpg', 'GET');
         httpHandler.router(get.req, get.res, () => {
-          expect(Buffer.compare(fileData, get.res._data)).to.equal(0);
+          var testSingleFile = multipart.getFile(fileData);
+          expect(Buffer.compare(testSingleFile.data, get.res._data)).to.equal(0);
           done();
         });
       });

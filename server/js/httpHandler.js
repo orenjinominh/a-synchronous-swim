@@ -10,6 +10,7 @@ module.exports.backgroundImageFile = path.join('.', 'background.jpg');
 
 
 
+
 let messageQueue = null;
 module.exports.initialize = (queue) => {
   messageQueue = queue;
@@ -67,17 +68,28 @@ module.exports.router = (req, res, next = ()=>{}) => {
 
 
   if(req.method === 'POST' && req.url === '/uploadedPic') {
-    var body = [];
-    req.on('data', function (chunk) {
-      body.push(chunk);
-    }).on('end', function () {
-      var body = Buffer.concat(body);
-      console.log('body--->', body);
-      res.writeHead(201, headers);
-      res.writeFile(module.exports.backgroundImageFile, body);
+
+    var imagedata = [];
+    req.on('data', function(chunk) {
+        imagedata.push(chunk);
     });
-    res.end();
-    next();
-  };
+    req.on('end', function() {
+        imagedata = Buffer.concat(imagedata);
+        res.writeHead(201, headers);
+        var uploadedFile = multipart.getFile(imagedata);
+        var uploadedImg = uploadedFile.data;
+
+        fs.writeFileSync(module.exports.backgroundImageFile, uploadedImg, 'binary', function(err) {
+            if (err) throw err;
+            console.log('File saved.');
+        });
+        res.end();
+        next();
+    });
 
 };
+
+
+  };
+
+
