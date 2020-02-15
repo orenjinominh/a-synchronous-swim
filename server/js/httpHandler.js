@@ -3,7 +3,7 @@ const path = require('path');
 const headers = require('./cors');
 const multipart = require('./multipartUtils');
 const msgQueue = require('./messageQueue');
-
+const serverUrl = 'http://127.0.0.1:3000'
 // Path for the background image ///////////////////////
 module.exports.backgroundImageFile = path.join('.', 'background.jpg');
 ////////////////////////////////////////////////////////
@@ -64,5 +64,20 @@ module.exports.router = (req, res, next = ()=>{}) => {
     res.end();
     next();
   }
+
+
+  if(req.method === 'POST' && req.url === '/uploadedPic') {
+    var body = [];
+    req.on('data', function (chunk) {
+      body.push(chunk);
+    }).on('end', function () {
+      var body = Buffer.concat(body);
+      console.log('body--->', body);
+      res.writeHead(201, headers);
+      res.writeFile(module.exports.backgroundImageFile, body);
+    });
+    res.end();
+    next();
+  };
 
 };

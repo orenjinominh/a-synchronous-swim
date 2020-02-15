@@ -35,7 +35,7 @@
     $.ajax({
       type: 'POST',
       data: formData,
-      url: serverUrl,
+      url: serverUrl + '/uploadedPic',
       cache: false,
       contentType: false,
       processData: false,
@@ -52,7 +52,7 @@
     var form = $('form .file')[0];
     if (form.files.length === 0) {
       console.log('No file selected!');
-      return;
+      return;data
     }
 
     var file = form.files[0];
