@@ -3,7 +3,7 @@ const path = require('path');
 const headers = require('./cors');
 const multipart = require('./multipartUtils');
 const msgQueue = require('./messageQueue');
-const serverUrl = 'http://127.0.0.1:3000'
+// const serverUrl = 'http://127.0.0.1:3000'
 // Path for the background image ///////////////////////
 module.exports.backgroundImageFile = path.join('.', 'background.jpg');
 ////////////////////////////////////////////////////////
@@ -19,19 +19,16 @@ module.exports.initialize = (queue) => {
 module.exports.router = (req, res, next = ()=>{}) => {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
 
-
-  // if (req.method === 'GET' && req.url === '/random') {
-  //   let directions = ['left', 'right', 'up', 'down'];
-  //   let index = Math.floor(Math.random()* directions.length);
-  //   let arrowPoint = directions[index];
-  //   res.writeHead(200, headers);
-  //   res.write(arrowPoint);
-  //   res.end();
-  // }
-
   if (req.method === 'GET') {
-
-    if (req.url === '/') {
+    if (req.url === '/random') {
+      let directions = ['left', 'right', 'up', 'down'];
+      let index = Math.floor(Math.random()* directions.length);
+      let arrowPoint = directions[index];
+      res.writeHead(200, headers);
+      res.write(arrowPoint);
+      res.end();
+      next();
+    } else if (req.url === '/') {
       res.writeHead(200, headers);
       let value = msgQueue.dequeue();
 
@@ -41,7 +38,6 @@ module.exports.router = (req, res, next = ()=>{}) => {
 
       res.end();
       next();
-
     } else if (req.url === '/background.jpg') {
       fs.readFile(module.exports.backgroundImageFile, (err, data) => {
         if (err) {
@@ -75,9 +71,12 @@ module.exports.router = (req, res, next = ()=>{}) => {
     });
     req.on('end', function() {
         imagedata = Buffer.concat(imagedata);
+        console.log('imagedata--->', imagedata);
         res.writeHead(201, headers);
         var uploadedFile = multipart.getFile(imagedata);
+        console.log('uploadedFile--->', uploadedFile);
         var uploadedImg = uploadedFile.data;
+        console.log('uploadedImg--->', uploadedImg);
 
         fs.writeFileSync(module.exports.backgroundImageFile, uploadedImg, 'binary', function(err) {
             if (err) throw err;
@@ -86,10 +85,8 @@ module.exports.router = (req, res, next = ()=>{}) => {
         res.end();
         next();
     });
-
+  };
 };
 
-
-  };
 
 

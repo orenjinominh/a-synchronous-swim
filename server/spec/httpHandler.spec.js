@@ -21,13 +21,14 @@ describe('server responses', () => {
     done();
   });
 
-  xit('should respond to a GET request for a swim command', (done) => {
+  it('should respond to a GET request for a swim command', (done) => {
     let {req, res} = server.mock('/random', 'GET');
 
     httpHandler.router(req, res);
     expect(res._responseCode).to.equal(200);
     expect(res._ended).to.equal(true);
-    // expect(res._data.toString()).to.not.be.empty;
+    console.log('data--->', res._data);
+    expect(res._data.toString()).to.not.be.empty;
     expect(['left', 'right', 'up', 'down']).to.contain(res._data.toString());
 
     done();

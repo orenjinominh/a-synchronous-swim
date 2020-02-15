@@ -11,6 +11,26 @@
   // Note: remember to fix the URL below.
   /////////////////////////////////////////////////////////////////////
 
+  const getRandom = () => {
+    $.ajax({
+      url: serverUrl + '/random',
+      type: 'GET',
+      success: (data) => {
+        SwimTeam.move(data);
+        console.log('GET REQUEST SUCCEEDED');
+        setTimeout(function(){ getRandom() }, 3000);
+      },
+      error: () => {
+        console.log('GET REQUEST FAILED');
+      }
+    });
+  };
+
+  $('#randomswim').on('click', function(){
+    console.log('click');
+    getRandom();
+  });
+
 
   const getArrow = () => {
     $.ajax({
@@ -25,7 +45,6 @@
       }
     });
   };
-
 
   setInterval(function(){getArrow()}, 3000);
 
